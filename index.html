@@ -22,17 +22,17 @@
     * { user-select: none; -webkit-user-select: none; }
     input { user-select: text; -webkit-user-select: text; }
 
-    /* 新海誠風格：白晝蔚藍晴空 vs 黃昏逢魔星夜 */
+    /* 新海誠電影光影風格：白晝蔚藍晴空 vs 深邃星夜與琥珀微光 */
     body {
-      background: linear-gradient(165deg, #bae6fd 0%, #e0f2fe 35%, #fef3c7 80%, #fed7aa 100%);
+      background: linear-gradient(165deg, #bae6fd 0%, #e0f2fe 45%, #fef3c7 85%, #fde68a 100%);
       background-attachment: fixed;
     }
     html.dark body {
-      background: linear-gradient(165deg, #090d16 0%, #111c38 35%, #1e2952 65%, #3b2d54 88%, #64385c 100%);
+      background: linear-gradient(165deg, #060b19 0%, #0f172a 40%, #1e293b 75%, #334155 100%);
       background-attachment: fixed;
     }
 
-    /* 電影感光暈與流星動畫 */
+    /* 星空與流星動畫 */
     @keyframes shootingStar {
       0% { transform: translateX(0) translateY(0) rotate(-35deg); opacity: 0; }
       10% { opacity: 0.9; }
@@ -40,8 +40,8 @@
       100% { transform: translateX(-450px) translateY(315px) rotate(-35deg); opacity: 0; }
     }
     @keyframes pulseGlow {
-      0%, 100% { opacity: 0.35; transform: scale(1); }
-      50% { opacity: 0.75; transform: scale(1.08); }
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.08); }
     }
     .shinkai-star {
       position: fixed;
@@ -55,26 +55,26 @@
     }
     .shooting-star {
       position: fixed;
-      width: 110px;
+      width: 120px;
       height: 1.5px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(125,211,252,0.5), transparent);
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(56,189,248,0.5), transparent);
       pointer-events: none;
       animation: shootingStar 9s linear infinite;
     }
 
     /* 清透電影毛玻璃卡片 */
     .cinema-card {
-      background: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.9);
       box-shadow: 0 10px 30px -5px rgba(14, 116, 144, 0.12);
       border-radius: 1.25rem;
     }
     html.dark .cinema-card {
-      background: rgba(15, 23, 42, 0.72);
+      background: rgba(15, 23, 42, 0.76);
       border: 1px solid rgba(148, 163, 184, 0.22);
-      box-shadow: 0 12px 32px -5px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 12px 32px -5px rgba(0, 0, 0, 0.6);
     }
 
     /* 時間表方塊過渡效果 */
@@ -129,7 +129,7 @@
           🌓
         </button>
 
-        <button onclick="resetAllData()" class="px-3 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800/80 bg-rose-50/70 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 hover:bg-rose-100 text-xs font-bold transition" title="清空重來">
+        <button onclick="resetAllData()" class="px-3 py-1.5 rounded-xl border border-amber-400/70 dark:border-amber-700/80 bg-amber-50/70 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 text-xs font-bold transition" title="清空重來">
           重置本局
         </button>
       </div>
@@ -190,12 +190,12 @@
             <div class="flex justify-between text-xs font-bold">
               <span class="text-sky-600 dark:text-sky-400">📘 自主讀書：<span id="statStudy">0</span>h</span>
               <span class="text-amber-600 dark:text-amber-400">🎮 自己的事：<span id="statOwn">0</span>h</span>
-              <span class="text-indigo-600 dark:text-indigo-400">💤 睡眠：<span id="statSleep">0</span>h</span>
+              <span class="text-teal-600 dark:text-teal-400">💤 睡眠：<span id="statSleep">0</span>h</span>
             </div>
             <div class="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex">
               <div id="barStudy" class="bg-sky-500 h-full transition-all duration-300" style="width: 0%"></div>
               <div id="barOwn" class="bg-amber-500 h-full transition-all duration-300" style="width: 0%"></div>
-              <div id="barSleep" class="bg-indigo-500 h-full transition-all duration-300" style="width: 0%"></div>
+              <div id="barSleep" class="bg-teal-500 h-full transition-all duration-300" style="width: 0%"></div>
             </div>
             <div class="flex justify-between text-[11px] text-slate-500 dark:text-slate-400">
               <span>🏫 固定上課：45h</span>
@@ -217,7 +217,7 @@
             <label class="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">
               時段內容（可自由輸入或點選下方快捷詞）：
             </label>
-            <input id="customLabelInput" type="text" maxlength="10" placeholder="例如：算數學、打手遊、打排球..." 
+            <input id="customLabelInput" type="text" maxlength="10" placeholder="例如：算數學、打手遊、跳舞..." 
               class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white/90 dark:bg-slate-900 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-sky-500" />
           </div>
 
@@ -225,7 +225,7 @@
           <div id="quickTags" class="flex flex-wrap gap-1.5 pt-1"></div>
 
           <div class="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
-            ⚡ <b>體力連動機制</b>：學校上課固定耗體力 35。讀書(-8/h)、運動興趣(-6/h)、娛樂日常(-4/h)、睡覺(+10/h)。<b>體力透支仍可繼續填寫</b>，但透支會扣減隔天起始體力！
+            ⚡ <b>體力連動機制</b>：學校上課固定耗體力 35。讀書(-8/h)、運動興趣(-6/h)、娛樂日常(-4/h)、睡覺(+10/h)。<b>體力超過上限透支仍可繼續填寫</b>，但透支會扣減隔天起始體力！
           </div>
         </div>
 
@@ -241,7 +241,7 @@
           </div>
           <div id="lobbyPlayerList" class="space-y-1.5 max-h-40 overflow-y-auto pr-1"></div>
 
-          <button onclick="startWeekSimulation()" class="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white shadow-lg shadow-sky-600/25 transition">
+          <button onclick="startWeekSimulation()" class="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-r from-sky-600 via-blue-600 to-teal-600 hover:from-sky-500 hover:to-teal-500 text-white shadow-lg shadow-sky-600/25 transition">
             ▶ 大家都寫好了，開始過這一週
           </button>
         </div>
@@ -270,7 +270,7 @@
                 <th class="py-2 text-xs font-black rounded-lg bg-slate-200/60 dark:bg-slate-800/80">週四</th>
                 <th class="py-2 text-xs font-black rounded-lg bg-slate-200/60 dark:bg-slate-800/80">週五</th>
                 <th class="py-2 text-xs font-black rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-300">週六</th>
-                <th class="py-2 text-xs font-black rounded-lg bg-rose-500/15 text-rose-600 dark:text-rose-300">週日</th>
+                <th class="py-2 text-xs font-black rounded-lg bg-orange-500/15 text-orange-600 dark:text-orange-300">週日</th>
               </tr>
               <!-- 每日體力結餘預覽列 -->
               <tr id="staminaHeaderRow"></tr>
@@ -301,7 +301,7 @@
           <button onclick="backToPlanning()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold hover:bg-slate-200/50 dark:hover:bg-slate-800 transition">
             ← 返回修改行程
           </button>
-          <button id="btnNextDay" onclick="advanceSimulationDay()" class="px-6 py-2.5 rounded-xl font-black text-sm bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white shadow-lg shadow-sky-600/25 transition">
+          <button id="btnNextDay" onclick="advanceSimulationDay()" class="px-6 py-2.5 rounded-xl font-black text-sm bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white shadow-lg shadow-sky-600/25 transition">
             進入下一天 ▶
           </button>
         </div>
@@ -339,7 +339,6 @@
     function initSkyAtmosphere() {
       const container = document.getElementById('skyAtmosphere');
       let html = '';
-      // 繁星點點
       for (let i = 0; i < 36; i++) {
         const left = (Math.random() * 98).toFixed(1);
         const top = (Math.random() * 65).toFixed(1);
@@ -347,14 +346,13 @@
         const delay = (Math.random() * 5).toFixed(1);
         html += `<div class="shinkai-star" style="left:${left}%; top:${top}%; animation-duration:${dur}s; animation-delay:${delay}s;"></div>`;
       }
-      // 劃過天際的流星
       html += `<div class="shooting-star" style="top: 12%; left: 78%; animation-delay: 1s;"></div>`;
       html += `<div class="shooting-star" style="top: 28%; left: 92%; animation-delay: 5.5s;"></div>`;
       container.innerHTML = html;
     }
 
     /**************************************************************
-     * 1. 常數、體力參數與類別設定（全面使用「打手遊」，無任何泡泡字眼）
+     * 1. 常數、體力參數與類別設定（興趣底下已加入「跳舞」）
      **************************************************************/
     const DAYS = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
     
@@ -395,7 +393,7 @@
         group: 'own',
         bgClass: 'bg-emerald-500/25 dark:bg-emerald-500/35 text-emerald-900 dark:text-emerald-100 border border-emerald-400/50',
         btnClass: 'border-emerald-500/60 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
-        tags: ['打排球', '打籃球', '社團練習', '練樂器', '健身慢跑', '畫畫創作']
+        tags: ['跳舞', '打排球', '打籃球', '社團練習', '練樂器', '健身慢跑', '畫畫創作']
       },
       own_social: {
         id: 'own_social',
@@ -411,8 +409,8 @@
         name: '💤 睡覺休息 (+10體力/h)',
         short: '睡覺',
         group: 'sleep',
-        bgClass: 'bg-indigo-500/20 dark:bg-indigo-500/30 text-indigo-900 dark:text-indigo-100 border border-indigo-400/40',
-        btnClass: 'border-indigo-500/60 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300',
+        bgClass: 'bg-teal-500/20 dark:bg-teal-500/30 text-teal-900 dark:text-teal-100 border border-teal-400/40',
+        btnClass: 'border-teal-500/60 bg-teal-500/10 text-teal-700 dark:text-teal-300',
         tags: ['睡覺', '補眠', '午休小睡']
       },
       empty: {
@@ -537,14 +535,13 @@
     /**************************************************************
      * 4. 每日體力與跨日透支計算核心
      **************************************************************/
-    // 計算某位玩家週一到週日每一天的 [起始體力, 結束體力, 是否透支]
     function calculateWeeklyStamina(grid) {
       const result = [];
-      let carryOverPenalty = 0; // 前一天透支或熬夜帶來的扣減
+      let carryOverPenalty = 0;
 
       for (let d = 0; d < 7; d++) {
         const startStamina = Math.max(20, Math.min(100, 100 + carryOverPenalty));
-        let delta = d < 5 ? STAMINA_COST.school : 0; // 平日上課固定 -35
+        let delta = d < 5 ? STAMINA_COST.school : 0;
         let sleepCount = 0;
 
         for (let h = 0; h < 24; h++) {
@@ -564,10 +561,10 @@
         // 計算對隔天的體力影響：若結束體力 < 0，或睡眠少於 6 小時，隔天起始體力會被扣減
         carryOverPenalty = 0;
         if (endStamina < 0) {
-          carryOverPenalty += Math.floor(endStamina * 0.8); // 透支直接拖累隔天
+          carryOverPenalty += Math.floor(endStamina * 0.8);
         }
         if (sleepCount < 6) {
-          carryOverPenalty -= (6 - sleepCount) * 8; // 睡不飽額外扣隔天體力
+          carryOverPenalty -= (6 - sleepCount) * 8;
         }
 
         result.push({
@@ -842,7 +839,7 @@
           const isOver = st.endStamina < 0;
           const isLow = st.endStamina >= 0 && st.endStamina < 25;
           let badgeClass = 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30';
-          if (isOver) badgeClass = 'bg-rose-500/25 text-rose-600 dark:text-rose-300 border-rose-500/50 animate-pulse';
+          if (isOver) badgeClass = 'bg-red-500/25 text-red-600 dark:text-red-300 border-red-500/50 animate-pulse';
           else if (isLow) badgeClass = 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40';
 
           rowHtml += `
@@ -1006,13 +1003,12 @@
       const sTask = studyTasks[0] || '讀書';
       const oTask = ownTasks[0] || '打手遊';
 
-      // 若當天有排讀書，優先觸發「讀書遇上誘惑/突發狀況」二選一
       if (studyHours >= 2) {
         const studyDilemmas = [
           {
             prompt: `晚上 20:30 正準備「${sTask}」時，死黨突然傳訊息：「欸打手遊五排缺一！打一場就好！」你要怎麼選？`,
             optA: { label: `堅持原本計畫繼續${sTask}`, deltaS: 0, deltaO: 0, deltaStamina: -5, resultText: `你咬牙關掉手機通知繼續${sTask}，守住了讀書進度，但定力消耗不少！` },
-            optB: { label: `不管了先上號打手遊！`, deltaS: -2, deltaO: +2, deltaStamina: 0, resultText: `結果「打一場就好」直接變成連打兩小時手遊，原本排的${sTask}直接泡湯！` }
+            optB: { label: `不管了先上號打手遊！`, deltaS: -2, deltaO: +2, deltaStamina: 0, resultText: `結果「打一場就好」直接變成連打兩小時手遊，原本排的${sTask}直接中斷！` }
           },
           {
             prompt: `放學回家剛翻開書本準備「${sTask}」，發現常看的動漫／影集居然更新最新一集了！`,
@@ -1028,24 +1024,22 @@
         return studyDilemmas[Math.floor(r * studyDilemmas.length)];
       }
 
-      // 若當天主要排娛樂/自己的事
       if (ownHours >= 2) {
         const ownDilemmas = [
           {
-            prompt: `正在開心「${oTask}」時，突然想到明後天還有一堆進度跟作業完全沒動，心裡有點毛毛的...`,
-            optA: { label: `不管了！今天就是要徹底放鬆`, deltaS: 0, deltaO: +1, deltaStamina: +5, resultText: `你決定把煩惱拋在腦後繼續爽玩，度過了超痛快的放學時光！` },
-            optB: { label: `良心發現，收心去讀 1 小時書`, deltaS: +1, deltaO: -1, deltaStamina: -5, resultText: `你難得發揮自制力關掉娛樂去翻書 1 小時，雖然有點累但安心多了！` }
+            prompt: `正在開心「${oTask}」時，突然想到明後天還有一堆進度跟作業完全沒動，心裡有點猶豫...`,
+            optA: { label: `不管了！今天就是要徹底放鬆`, deltaS: 0, deltaO: +1, deltaStamina: +5, resultText: `你決定把煩惱拋在腦後繼續投入在「${oTask}」中，度過超痛快的放學時光！` },
+            optB: { label: `良心發現，收心去讀 1 小時書`, deltaS: +1, deltaO: -1, deltaStamina: -5, resultText: `你難得發揮自制力提早結束娛樂去翻書 1 小時，雖然有點累但安心多了！` }
           },
           {
-            prompt: `晚上在「${oTask}」到一半，朋友突然傳訊揪：「現在手感超燙，要不要繼續戰到半夜？」`,
-            optA: { label: `見好就收，照原定時間休息`, deltaS: 0, deltaO: 0, deltaStamina: +5, resultText: `你果斷放下手機準時去休息，保住了隔天的精神與體力！` },
-            optB: { label: `奉陪到底！繼續燃燒熱血`, deltaS: 0, deltaO: +2, deltaStamina: -15, resultText: `你們一路嗨到深夜，自己的事多爽了 2 小時，但體力大透支！` }
+            prompt: `晚上在「${oTask}」到一半，朋友突然傳訊揪：「現在狀態超好，要不要繼續加碼到半夜？」`,
+            optA: { label: `見好就收，照原定時間休息`, deltaS: 0, deltaO: 0, deltaStamina: +5, resultText: `你果斷準時去休息，保住了隔天的精神與體力！` },
+            optB: { label: `奉陪到底！繼續燃燒熱血`, deltaS: 0, deltaO: +2, deltaStamina: -15, resultText: `你們一路嗨到深夜，自己的事多做了 2 小時，但體力大透支！` }
           }
         ];
         return ownDilemmas[Math.floor(r * ownDilemmas.length)];
       }
 
-      // 若當天幾乎都在睡覺或空白
       return {
         prompt: `今天課餘時間排得非常悠閒，傍晚看著窗外的晚霞，你決定怎麼度過這段空檔？`,
         optA: { label: `臨時起意拿書出來複習 1 小時`, deltaS: +1, deltaO: 0, deltaStamina: -5, resultText: `你把握空檔多讀了 1 小時書，感覺特別充實！` },
@@ -1053,7 +1047,6 @@
       };
     }
 
-    // 計算單日模擬結果（整合：體力透支檢定 ＋ 揪團巧遇 ＋ 二選一抉擇結果）
     function simulatePlayerDay(player, dayIdx, allPlayers, baseSeed) {
       const grid = player.grid || {};
       const weeklyStamina = calculateWeeklyStamina(grid);
@@ -1160,7 +1153,6 @@
       document.getElementById('simDayBadge').textContent = DAYS[dayIdx];
       document.getElementById('simStatusTitle').textContent = `${DAYS[dayIdx]}・課餘經歷與突發抉擇`;
 
-      // 檢查是否所有人都已做出當天的二選一抉擇
       const allChosen = allPlayers.every(p => {
         const k = `${dayIdx}_${p.id}`;
         return state.simState.choices && (state.simState.choices[k] === 'A' || state.simState.choices[k] === 'B');
@@ -1175,7 +1167,7 @@
         nextBtn.textContent = allChosen ? `進入 ${DAYS[dayIdx + 1]} ▶` : `等待全員完成抉擇...`;
         nextBtn.disabled = !allChosen;
         nextBtn.className = allChosen
-          ? 'px-6 py-2.5 rounded-xl font-black text-sm bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white shadow-lg shadow-sky-600/25 transition'
+          ? 'px-6 py-2.5 rounded-xl font-black text-sm bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white shadow-lg shadow-sky-600/25 transition'
           : 'px-6 py-2.5 rounded-xl font-black text-sm bg-amber-600/70 text-white cursor-not-allowed';
       }
 
@@ -1202,7 +1194,7 @@
       cardsContainer.innerHTML = allPlayers.map(p => {
         const res = simulatePlayerDay(p, dayIdx, allPlayers, state.simState.seed);
         const staminaBadge = res.endStamina < 0
-          ? `<span class="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-600 dark:text-rose-300">體力 ${res.endStamina} (透支)</span>`
+          ? `<span class="px-2 py-0.5 rounded-md bg-red-500/20 text-red-600 dark:text-red-300">體力 ${res.endStamina} (透支)</span>`
           : `<span class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-300">體力 ${res.endStamina}</span>`;
 
         return `
@@ -1222,14 +1214,14 @@
                 ${res.logs.map(l => {
                   let boxStyle = 'bg-white/60 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700';
                   if (l.type === 'good') boxStyle = 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-200 font-bold';
-                  if (l.type === 'bad') boxStyle = 'bg-rose-500/15 border border-rose-500/40 text-rose-800 dark:text-rose-200 font-bold';
+                  if (l.type === 'bad') boxStyle = 'bg-red-500/15 border border-red-500/40 text-red-800 dark:text-red-200 font-bold';
                   if (l.type === 'choice') boxStyle = 'bg-amber-500/15 border border-amber-500/40 text-amber-800 dark:text-amber-200 font-bold';
                   return `<div class="p-2.5 rounded-xl text-xs leading-relaxed ${boxStyle}">${l.text}</div>`;
                 }).join('')}
               </div>
 
               <!-- 計畫趕不上變化：現場二選一抉擇區塊 -->
-              <div class="p-3.5 rounded-xl bg-gradient-to-br from-sky-500/10 via-indigo-500/10 to-amber-500/10 border border-sky-500/30 space-y-2.5">
+              <div class="p-3.5 rounded-xl bg-gradient-to-br from-sky-500/10 via-blue-500/10 to-amber-500/10 border border-sky-500/30 space-y-2.5">
                 <div class="flex items-center justify-between">
                   <span class="text-[11px] font-black text-sky-600 dark:text-sky-300">⚡ 計畫趕不上變化・二選一抉擇</span>
                   ${res.picked ? `<span class="text-[10px] font-bold text-emerald-500">✓ 已抉擇</span>` : `<span class="text-[10px] font-bold text-amber-500 animate-pulse">請選擇</span>`}
@@ -1318,11 +1310,11 @@
               </div>
               <div class="flex justify-between">
                 <span>💤 本週總睡眠：</span>
-                <span class="font-black text-indigo-600 dark:text-indigo-400">${totalSleep}h（日均 ${(totalSleep/7).toFixed(1)}h）</span>
+                <span class="font-black text-teal-600 dark:text-teal-400">${totalSleep}h（日均 ${(totalSleep/7).toFixed(1)}h）</span>
               </div>
               <div class="flex justify-between">
                 <span>⚡ 體力透支天數：</span>
-                <span class="font-black ${overdrawnDays > 0 ? 'text-rose-500' : 'text-emerald-500'}">${overdrawnDays} 天</span>
+                <span class="font-black ${overdrawnDays > 0 ? 'text-red-500' : 'text-emerald-500'}">${overdrawnDays} 天</span>
               </div>
             </div>
           </div>
