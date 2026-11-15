@@ -204,8 +204,8 @@
 
         <div>
           <label class="font-bold text-slate-600 dark:text-slate-300 block mb-1">Google Apps Script (GAS) 網頁應用程式網址（寫入 Google 試算表）：</label>
-          <input id="gasUrlInput" type="text" placeholder="https://script.google.com/macros/s/AKfycby62H3d1ZCqnOeGRVJkjFt6nNFWN3B_xvPGnFElDZHqMsnIFDCQKyiFbjdPiVrH8fIk/exec" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900 font-mono text-xs" />
-          <p class="text-[11px] text-slate-400 mt-1">貼上部署後的 GAS 網址並儲存後，全場裝置都會自動同步此試算表連結。</p>
+          <input id="gasUrlInput" type="text" placeholder="https://script.google.com/macros/s/....../exec" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900 font-mono text-xs" />
+          <p class="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1">✓ 已預設載入你的專屬 Firebase 與 GAS 試算表網址。</p>
         </div>
       </div>
 
@@ -401,7 +401,7 @@
       <!-- 每個人的當日經歷與二選一抉擇卡片 -->
       <div id="simPlayerCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
-      <!-- 週末總結算報告（含：週計畫檢測評價、專屬稱號、調整建議、36 則聖經經文配對） -->
+      <!-- 週末總結算報告 -->
       <div id="finalSummaryBox" class="hidden cinema-card p-5 sm:p-6 space-y-5 border-2 border-sky-500/50">
         <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-200/80 dark:border-slate-700/80 pb-4">
           <div>
@@ -446,13 +446,28 @@
 
   <script>
     /**************************************************************
-     * 0. 雲端連線設定（Firebase 與 Google Apps Script 網址）
+     * 0. 雲端連線設定（已直接內建你的專屬 Firebase 與 GAS 網址）
      **************************************************************/
-    let FIREBASE_URL = localStorage.getItem('tc_firebase_url') || 'https://weeklyplangame-default-rtdb.firebaseio.com/time_craft_shinkai_console';
-    let GAS_WEB_APP_URL = localStorage.getItem('tc_gas_url') || '';
+    const DEFAULT_FIREBASE_URL = 'https://weeklyplangame-default-rtdb.firebaseio.com/weekly_plan_game';
+    const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycby62H3d1ZCqnOeGRVJkjFt6nNFWN3B_xvPGnFElDZHqMsnIFDCQKyiFbjdPiVrH8fIk/exec';
+
+    // 自動清除舊版測試網址快取，強制套用你的新網址
+    let savedFb = localStorage.getItem('tc_firebase_url');
+    if (!savedFb || savedFb.includes('money-d8327')) {
+      savedFb = DEFAULT_FIREBASE_URL;
+      localStorage.setItem('tc_firebase_url', DEFAULT_FIREBASE_URL);
+    }
+    let FIREBASE_URL = savedFb;
+
+    let savedGas = localStorage.getItem('tc_gas_url');
+    if (!savedGas) {
+      savedGas = DEFAULT_GAS_URL;
+      localStorage.setItem('tc_gas_url', DEFAULT_GAS_URL);
+    }
+    let GAS_WEB_APP_URL = savedGas;
 
     /**************************************************************
-     * 1. 聖經經文與具體建議資料庫（共 36 則，依 6 大時間管理診斷類型分類）
+     * 1. 聖經經文與具體建議資料庫（共 36 則）
      **************************************************************/
     const BIBLE_VERSES = [
       // 【類型 1：burnout 體力透支與過勞型（6 則）】
@@ -482,7 +497,7 @@
       // 【類型 4：hedonist 娛樂至上／自由享樂型（6 則）】
       { id: 19, cat: 'hedonist', catName: '愛惜光陰與智慧選擇', ref: '以弗所書 5:15-16', text: '你們要謹慎行事，不要像愚昧人，當像智慧人。要愛惜光陰，因為現今的世代邪惡。', advice: '青春的娛樂與社團很精彩，但記得每天為學習與未來預留固定時段，才不會在考前手忙腳亂。' },
       { id: 20, cat: 'hedonist', catName: '愛惜光陰與智慧選擇', ref: '傳道書 11:9', text: '少年人哪，你在幼年時當快樂。在幼年的日子，使你的心歡暢...卻要知道，為這一切的事，神必審問你。', advice: '盡情享受打手遊、跳舞與朋友歡聚的同時，也別忘了對自己的學業與本分負責喔！' },
-      { id: 21, cat: 'hedonist', catName: '愛惜光陰與智慧選擇', ref: '傳道書 3:1', text: '凡事都有定期，天下萬務都有定時。', advice: '玩樂有定時、讀書也有定時。試著把一週的娛樂濃縮在最精華的時段，腾出空間給重要的成長目標。' },
+      { id: 21, cat: 'hedonist', catName: '愛惜光陰與智慧選擇', ref: '傳道書 3:1', text: '凡事都有定期，天下萬務都有定時。', advice: '玩樂有定時、讀書也有定時。試著把一週的娛樂濃縮在最精華的時段，騰出空間給重要的成長目標。' },
       { id: 22, cat: 'hedonist', catName: '愛惜光陰與智慧選擇', ref: '詩篇 90:12', text: '求你指教我們怎樣數算自己的日子，好叫我們得著智慧的心。', advice: '一週 168 小時轉眼就過，試著每天撥出 1~2 小時給需要靜下心累積的事，你會發現自己潛力無窮。' },
       { id: 23, cat: 'hedonist', catName: '愛惜光陰與智慧選擇', ref: '箴言 12:11', text: '耕種自己田地的，必得飽食；追隨虛浮的，卻是無知。', advice: '放鬆完之後，記得回頭耕耘自己的課業與能力，紮實的收穫會帶給你更長久的成就感。' },
       { id: 24, cat: 'hedonist', catName: '愛惜光陰與智慧選擇', ref: '哥林多前書 10:23', text: '凡事都可行，但不都有益處；凡事都可行，但不都造就人。', advice: '在排下週時間表時，問問自己：「這個活動能讓我充電，還是只是在消磨時間？」' },
@@ -505,7 +520,7 @@
     ];
 
     /**************************************************************
-     * 2. 常數、體力參數與類別設定（興趣包含「跳舞」）
+     * 2. 常數、體力參數與類別設定
      **************************************************************/
     const DAYS = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
     
@@ -590,7 +605,7 @@
         sheetSynced: false
       },
       config: {
-        gasUrl: ''
+        gasUrl: DEFAULT_GAS_URL
       }
     };
 
@@ -683,7 +698,7 @@
       });
 
       await pullFromCloud();
-      setInterval(pullFromCloud, 2200);
+      setInterval(pullFromCloud, 2000);
 
       if (currentPlayerId && state.players[currentPlayerId]) {
         closeJoinModal();
@@ -725,7 +740,7 @@
         }
         refreshUI();
       } catch (e) {
-        console.warn('離線模式運作中', e);
+        console.warn('連線異常或離線運作中', e);
       }
     }
 
@@ -783,7 +798,6 @@
       const avgSleep = (totalSleep / 7).toFixed(1);
       const studyDiff = realS - planS;
 
-      // 判定 6 大診斷分類
       let diagCat = 'balanced';
       let title = '⚖️ 晴空下的時間平衡大師';
       let evaluation = '';
@@ -821,7 +835,6 @@
         suggestion = `【調整建議】你很清楚自己的體力極限與生活優先順序！請繼續保持這份「讀書時專注、放鬆時盡興、睡覺時安穩」的良性循環。`;
       }
 
-      // 計算健康平衡分數 (0~100)
       let score = 78;
       if (realS >= 14 && realS <= 30) score += 10;
       else if (realS < 6) score -= 12;
@@ -831,7 +844,6 @@
       score -= Math.max(0, Math.abs(studyDiff) - 2) * 2;
       score = Math.max(45, Math.min(99, score));
 
-      // 從對應診斷類別的 6 則經文中抽出專屬經文（支援點擊換一則）
       const matchingVerses = BIBLE_VERSES.filter(v => v.cat === diagCat);
       const pHash = player.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
       const offset = (state.simState.verseOffsets && state.simState.verseOffsets[player.id]) || 0;
@@ -892,7 +904,7 @@
     }
 
     /**************************************************************
-     * 6. Google 試算表 (GAS) 串接與匯出（包含檢測評價與經文）
+     * 6. Google 試算表 (GAS) 串接與匯出
      **************************************************************/
     function openConfigModal() {
       document.getElementById('firebaseUrlInput').value = FIREBASE_URL;
@@ -908,11 +920,13 @@
       const fUrl = document.getElementById('firebaseUrlInput').value.trim().replace(/\/$/, '');
       const gUrl = document.getElementById('gasUrlInput').value.trim();
       if (fUrl) {
-        FIREBASE_URL = fUrl;
+        FIREBASE_URL = fUrl.includes('.firebaseio.com/') ? fUrl : `${fUrl}/weekly_plan_game`;
         localStorage.setItem('tc_firebase_url', FIREBASE_URL);
       }
-      GAS_WEB_APP_URL = gUrl;
-      localStorage.setItem('tc_gas_url', GAS_WEB_APP_URL);
+      if (gUrl) {
+        GAS_WEB_APP_URL = gUrl;
+        localStorage.setItem('tc_gas_url', GAS_WEB_APP_URL);
+      }
 
       try {
         await fetch(`${FIREBASE_URL}/config.json`, {
@@ -930,7 +944,7 @@
     async function syncAllToGoogleSheet(manualTrigger = false) {
       if (!GAS_WEB_APP_URL) {
         if (manualTrigger) {
-          alert('請先在右上角「⚙️」貼上你的 Google Apps Script (GAS) 網頁應用程式網址！');
+          alert('請先在右上角「⚙️」確認你的 Google Apps Script (GAS) 網頁應用程式網址！');
           openConfigModal();
         }
         return;
@@ -1563,11 +1577,24 @@
     }
 
     /**************************************************************
-     * 11. 開始過這一週：體力檢定 ＋「計畫趕不上變化」現場二選一抉擇
+     * 11. 開始過這一週：24 道不重複二選一題庫 ＋ 7 天洗牌演算法
      **************************************************************/
     function seededRandom(seed) {
       let x = Math.sin(seed) * 10000;
       return x - Math.floor(x);
+    }
+
+    // 依據玩家專屬種子洗牌，確保週一到週日 (dayIdx 0~6) 絕對不會抽到重複題號
+    function pickNonRepeatingIndex(dayIdx, poolLength, playerSeed) {
+      const indices = Array.from({ length: poolLength }, (_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const r = seededRandom(playerSeed + i * 37);
+        const j = Math.floor(r * (i + 1));
+        const temp = indices[i];
+        indices[i] = indices[j];
+        indices[j] = temp;
+      }
+      return indices[dayIdx % poolLength];
     }
 
     async function startWeekSimulation() {
@@ -1614,55 +1641,157 @@
       } catch (e) {}
     }
 
+    // 擴充為 24 道豐富情境，且週一到週日不重複
     function buildDailyDilemma(player, dayIdx, studyHours, ownHours, studyTasks, ownTasks, baseSeed) {
       const pHash = player.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-      const r = seededRandom(baseSeed + dayIdx * 131 + pHash * 7);
+      const playerSeed = (baseSeed || 12345) + pHash * 17;
 
-      const sTask = studyTasks[0] || '讀書';
+      const sTask = studyTasks[0] || '自主讀書';
       const oTask = ownTasks[0] || '打手遊';
 
-      if (studyHours >= 2) {
-        const studyDilemmas = [
-          {
-            prompt: `晚上 20:30 正準備「${sTask}」時，死黨突然傳訊息：「欸打手遊五排缺一！打一場就好！」你要怎麼選？`,
-            optA: { label: `堅持原本計畫繼續${sTask}`, deltaS: 0, deltaO: 0, deltaStamina: -5, resultText: `你咬牙關掉手機通知繼續${sTask}，守住了讀書進度，但定力消耗不少！` },
-            optB: { label: `不管了先上號打手遊！`, deltaS: -2, deltaO: +2, deltaStamina: 0, resultText: `結果「打一場就好」直接變成連打兩小時手遊，原本排的${sTask}直接中斷！` }
-          },
-          {
-            prompt: `放學回家剛翻開書本準備「${sTask}」，發現常看的動漫／影集居然更新最新一集了！`,
-            optA: { label: `忍住不看，先把進度讀完`, deltaS: +1, deltaO: 0, deltaStamina: -5, resultText: `你成功忍住誘惑專心把進度讀完，因為太專注還超前了 1 小時效率！` },
-            optB: { label: `先看一集配飯再說`, deltaS: -1, deltaO: +1, deltaStamina: +5, resultText: `看了一集覺得太精彩不小心連看兩集，讀書時間少了 1 小時，但心情超放鬆！` }
-          },
-          {
-            prompt: `正在「${sTask}」遇到超難題目卡關時，同學問你要不要乾脆出來買宵夜透透氣？`,
-            optA: { label: `拒絕出門，自己死磕到底`, deltaS: 0, deltaO: 0, deltaStamina: -8, resultText: `你留在書桌前苦思冥想終於解開題目，守住讀書時數但腦力大消耗！` },
-            optB: { label: `出門買宵夜順便轉換心情`, deltaS: -1, deltaO: +1, deltaStamina: +6, resultText: `你跟同學去買了雞排跟飲料聊得很開心，讀書少 1 小時但恢復了不少精神！` }
-          }
-        ];
-        return studyDilemmas[Math.floor(r * studyDilemmas.length)];
-      }
+      // 【題庫 1：當日有安排讀書（共 8 題，週一～週日不重複）】
+      const studyDilemmas = [
+        {
+          prompt: `晚上正準備「${sTask}」時，死黨突然傳訊息：「欸打手遊五排缺一！打一場就好！」你要怎麼選？`,
+          optA: { label: `堅持原本計畫繼續${sTask}`, deltaS: 0, deltaO: 0, deltaStamina: -5, resultText: `你咬牙關掉手機通知繼續${sTask}，守住了讀書進度！` },
+          optB: { label: `不管了先上號打手遊！`, deltaS: -2, deltaO: +2, deltaStamina: 0, resultText: `結果「打一場就好」變成連打兩小時手遊，原本排的${sTask}直接泡湯！` }
+        },
+        {
+          prompt: `放學回家剛翻開書本準備「${sTask}」，發現追了好久的動漫居然剛更新最新一集！`,
+          optA: { label: `忍住不點開，先把進度讀完`, deltaS: +1, deltaO: 0, deltaStamina: -5, resultText: `你成功忍住誘惑專心把進度讀完，因為太專注還多推進了 1 小時效率！` },
+          optB: { label: `先看一集配晚餐再說`, deltaS: -1, deltaO: +1, deltaStamina: +5, resultText: `看了一集覺得太精彩不小心連看兩集，讀書時間少 1 小時，但心情超放鬆！` }
+        },
+        {
+          prompt: `正在「${sTask}」遇到超難題目卡關時，同學問你要不要乾脆出來買雞排跟手搖飲透透氣？`,
+          optA: { label: `拒絕出門，自己把題目搞懂`, deltaS: 0, deltaO: 0, deltaStamina: -8, resultText: `你留在書桌前苦思冥想終於解開題目，守住讀書時數但腦力大消耗！` },
+          optB: { label: `出門買宵夜順便轉換心情`, deltaS: -1, deltaO: +1, deltaStamina: +6, resultText: `你跟同學去買了雞排聊得很開心，讀書少 1 小時但恢復了不少精神！` }
+        },
+        {
+          prompt: `才剛坐下來「${sTask}」15 分鐘，手機 IG / Threads 突然狂跳班上同學的限動八卦通知！`,
+          optA: { label: `直接開啟勿擾模式，把手機丟到床上`, deltaS: +1, deltaO: 0, deltaStamina: -4, resultText: `少了手機干擾後思緒超清晰，不知不覺多完成了 1 小時的讀書份量！` },
+          optB: { label: `好奇心爆發，拿起來滑一下下就好`, deltaS: -1, deltaO: +1, deltaStamina: 0, resultText: `結果從八卦限動一路滑到短影音，回過神來已經過了整整 1 小時！` }
+        },
+        {
+          prompt: `晚上「${sTask}」讀到一半覺得眼皮超重、精神渙散，這時你會怎麼處理？`,
+          optA: { label: `去洗把臉、站起來硬撐把進度讀完`, deltaS: 0, deltaO: 0, deltaStamina: -10, resultText: `你靠意志力撐完了預定進度，但大腦與身體都覺得加倍疲勞。` },
+          optB: { label: `先去聽歌放空或小睡 1 小時再說`, deltaS: -1, deltaO: +1, deltaStamina: +8, resultText: `雖然少讀了 1 小時，但讓大腦適時關機充電，體力恢復了不少！` }
+        },
+        {
+          prompt: `準備開始「${sTask}」前，發現書桌亂糟糟的，突然湧起一股想大掃除整理房間的衝動...`,
+          optA: { label: `識破這是逃避讀書的藉口，立刻翻開書本`, deltaS: 0, deltaO: 0, deltaStamina: -5, resultText: `你沒有被「假性忙碌」騙走時間，踏實地照計畫讀完了書！` },
+          optB: { label: `先花 1 小時把房間跟書桌整理乾淨`, deltaS: -1, deltaO: +1, deltaStamina: -4, resultText: `你把書桌擦得一塵不染還翻出以前的舊照片，等準備讀書時已經少掉 1 小時了！` }
+        },
+        {
+          prompt: `好朋友傳語音來吐苦水，說他今天心情超差想找人陪他聊聊天，但你正準備「${sTask}」...`,
+          optA: { label: `溫柔告訴他你先讀完這段，晚點再回他`, deltaS: 0, deltaO: 0, deltaStamina: -4, resultText: `朋友理解地答應了，你也順利守住了今晚的讀書計畫。` },
+          optB: { label: `講義氣直接放下書本陪他講電話 1 小時`, deltaS: -1, deltaO: +1, deltaStamina: 0, resultText: `你陪好友聊了 1 小時幫他排解心情，雖然少讀了書，但友情大升溫！` }
+        },
+        {
+          prompt: `今天「${sTask}」的進度比預期提早了一點進入狀況，你決定接下來怎麼安排？`,
+          optA: { label: `趁手感好，多寫一回練習題衝刺`, deltaS: +1, deltaO: 0, deltaStamina: -8, resultText: `你乘勝追擊多讀了 1 小時進度，成就感爆棚！` },
+          optB: { label: `見好就收，提早 1 小時去打手遊犒賞自己`, deltaS: -1, deltaO: +1, deltaStamina: +4, resultText: `你提早收工去打手遊放鬆，勞逸結合心情超愉快！` }
+        }
+      ];
 
-      if (ownHours >= 2) {
-        const ownDilemmas = [
-          {
-            prompt: `正在開心「${oTask}」時，突然想到明後天還有一堆進度跟作業完全沒動，心裡有點猶豫...`,
-            optA: { label: `不管了！今天就是要徹底放鬆`, deltaS: 0, deltaO: +1, deltaStamina: +5, resultText: `你決定把煩惱拋在腦後繼續投入在「${oTask}」中，度過超痛快的放學時光！` },
-            optB: { label: `良心發現，收心去讀 1 小時書`, deltaS: +1, deltaO: -1, deltaStamina: -5, resultText: `你難得發揮自制力提早結束娛樂去翻書 1 小時，雖然有點累但安心多了！` }
-          },
-          {
-            prompt: `晚上在「${oTask}」到一半，朋友突然傳訊揪：「現在狀態超好，要不要繼續加碼到半夜？」`,
-            optA: { label: `見好就收，照原定時間休息`, deltaS: 0, deltaO: 0, deltaStamina: +5, resultText: `你果斷準時去休息，保住了隔天的精神與體力！` },
-            optB: { label: `奉陪到底！繼續燃燒熱血`, deltaS: 0, deltaO: +2, deltaStamina: -15, resultText: `你們一路嗨到深夜，自己的事多做了 2 小時，但體力大透支！` }
-          }
-        ];
-        return ownDilemmas[Math.floor(r * ownDilemmas.length)];
-      }
+      // 【題庫 2：當日有安排娛樂/運動興趣/自己的事（共 8 題，週一～週日不重複）】
+      const ownDilemmas = [
+        {
+          prompt: `正在開心「${oTask}」時，突然想到明後天還有考試跟作業完全沒動，心裡有點猶豫...`,
+          optA: { label: `良心發現，提早收心去讀 1 小時書`, deltaS: +1, deltaO: -1, deltaStamina: -5, resultText: `你難得發揮自制力提早結束娛樂去翻書 1 小時，雖然有點累但安心多了！` },
+          optB: { label: `不管了！今天就是要徹底投入「${oTask}」`, deltaS: 0, deltaO: +1, deltaStamina: +5, resultText: `你決定把煩惱拋在腦後繼續爽玩，度過超痛快的放學時光！` }
+        },
+        {
+          prompt: `晚上在「${oTask}」到一半，朋友突然傳訊揪：「現在狀態超燙，要不要繼續加碼到半夜？」`,
+          optA: { label: `見好就收，照原定時間準時去休息`, deltaS: 0, deltaO: 0, deltaStamina: +6, resultText: `你果斷準時收工休息，成功保住了隔天的精神與體力！` },
+          optB: { label: `奉陪到底！繼續燃燒熱血加碼 2 小時`, deltaS: 0, deltaO: +2, deltaStamina: -15, resultText: `你們一路嗨到深夜，自己的事多做了 2 小時，但體力大透支！` }
+        },
+        {
+          prompt: `放學準備去「${oTask}」前，家人請你先幫忙跑腿買東西跟整理家務，這時你會？`,
+          optA: { label: `先幫忙完成家事，再把握剩下的時間複習功課`, deltaS: +1, deltaO: -1, deltaStamina: -5, resultText: `幫完家人後你順勢坐在書桌前讀了 1 小時書，爸媽看你的眼神充滿欣慰！` },
+          optB: { label: `火速解決家事，然後加倍補償自己的娛樂時間`, deltaS: 0, deltaO: +1, deltaStamina: -4, resultText: `你用最快速度忙完，接著毫無保留地享受屬於自己的放學時光！` }
+        },
+        {
+          prompt: `今天在「${oTask}」時遇到瓶頸（手遊連敗／練習卡關），心情有點悶，你決定？`,
+          optA: { label: `乾脆關掉去換個腦袋，拿書出來讀 1 小時`, deltaS: +1, deltaO: -1, deltaStamina: -4, resultText: `轉換心情去讀書反而意外地專注，把原本鬱悶的時間變成了學習進度！` },
+          optB: { label: `不服輸！再戰 1 小時直到成功為止`, deltaS: 0, deltaO: +1, deltaStamina: -8, resultText: `你堅持到底終於扳回一城，多花了 1 小時在自己的事上！` }
+        },
+        {
+          prompt: `朋友群組突然有人約去練舞／打球流汗，但你原本排了「${oTask}」...`,
+          optA: { label: `照原本的步調活動，結束後順便讀點書`, deltaS: +1, deltaO: 0, deltaStamina: -5, resultText: `你穩穩照著自己的節奏走，睡前還多讀了 1 小時書！` },
+          optB: { label: `熱血加入朋友的局，結束再去吃宵夜！`, deltaS: 0, deltaO: +2, deltaStamina: -10, resultText: `你跟朋友玩得超瘋還去吃了宵夜，自由活動多加 2 小時！` }
+        },
+        {
+          prompt: `滑手機看到別班同學在曬讀書筆記跟段考倒數，正在「${oTask}」的你突然一陣焦慮...`,
+          optA: { label: `立刻放下手邊娛樂，去書桌前讀 1 小時`, deltaS: +1, deltaO: -1, deltaStamina: -5, resultText: `你化焦慮為行動，馬上補了 1 小時讀書進度！` },
+          optB: { label: `直接滑掉假裝沒看到，繼續享受當下`, deltaS: 0, deltaO: +1, deltaStamina: +4, resultText: `你決定不被別人的節奏影響，繼續開心地做自己的事！` }
+        },
+        {
+          prompt: `今天「${oTask}」玩得超開心，但轉眼已經到了該洗澡睡覺的時間，你卻還意猶未盡...`,
+          optA: { label: `自律關機去洗澡睡覺，儲備明天體力`, deltaS: 0, deltaO: 0, deltaStamina: +8, resultText: `你展現了超強自制力準時上床，隔天精神飽滿！` },
+          optB: { label: `偷偷躲在被窩裡再多玩 1 小時`, deltaS: 0, deltaO: +1, deltaStamina: -10, resultText: `你在被窩裡多爽了 1 小時，但睡眠與體力都被偷偷扣分了！` }
+        },
+        {
+          prompt: `週末或放學的自由時光，你突然靈光一閃想學點新東西（練新舞步／新歌／新技能）...`,
+          optA: { label: `先把學校課業複習 1 小時再去研究`, deltaS: +1, deltaO: 0, deltaStamina: -6, resultText: `你先搞定了課業再研究興趣，兩邊都兼顧得超棒！` },
+          optB: { label: `全神貫注投入在興趣裡研究 2 小時`, deltaS: 0, deltaO: +2, deltaStamina: -8, resultText: `你完全沉浸在自己的興趣領域中，度過了超充實的時光！` }
+        }
+      ];
 
-      return {
-        prompt: `今天課餘時間排得非常悠閒，傍晚看著窗外的晚霞，你決定怎麼度過這段空檔？`,
-        optA: { label: `臨時起意拿書出來複習 1 小時`, deltaS: +1, deltaO: 0, deltaStamina: -5, resultText: `你把握空檔多讀了 1 小時書，感覺特別充實！` },
-        optB: { label: `打開手機打手遊放鬆 1 小時`, deltaS: 0, deltaO: +1, deltaStamina: 0, resultText: `你悠閒地打了 1 小時手遊，享受難得的清閒傍晚。` }
-      };
+      // 【題庫 3：當日未排讀書與娛樂（全睡覺或全空白，共 8 題，週一～週日不重複）】
+      const freeDilemmas = [
+        {
+          prompt: `${DAYS[dayIdx]}這天你的課餘時間排得非常悠閒，傍晚看著窗外的晚霞，你決定怎麼度過這段空檔？`,
+          optA: { label: `臨時起意拿書出來複習 1 小時`, deltaS: +1, deltaO: 0, deltaStamina: -5, resultText: `你把握空檔多讀了 1 小時書，感覺特別充實！` },
+          optB: { label: `打開手機打手遊放鬆 1 小時`, deltaS: 0, deltaO: +1, deltaStamina: 0, resultText: `你悠閒地打了 1 小時手遊，享受難得的清閒傍晚。` }
+        },
+        {
+          prompt: `${DAYS[dayIdx]}放學後完全沒有排定行程，走在路上剛好經過常去的飲料店與書局，你會？`,
+          optA: { label: `走進書局翻翻參考書、順便自習 1 小時`, deltaS: +1, deltaO: 0, deltaStamina: -4, resultText: `你在書局吹冷氣安靜讀了 1 小時書，意外地很有收穫！` },
+          optB: { label: `買杯手搖飲，邊喝邊散步去公園聽音樂放空`, deltaS: 0, deltaO: +1, deltaStamina: +5, resultText: `你喝著飲料散步放空了 1 小時，身心都得到了療癒！` }
+        },
+        {
+          prompt: `${DAYS[dayIdx]}晚上你原本打算一路睡飽或發呆，這時同學突然傳訊問你某題作業怎麼寫...`,
+          optA: { label: `乾脆把課本拿出來研究並順便複習 1 小時`, deltaS: +1, deltaO: 0, deltaStamina: -5, resultText: `為了教同學，你自己也順便把這章節讀熟了 1 小時！` },
+          optB: { label: `回他「我也不會欸」然後跟他聊八卦聊了 1 小時`, deltaS: 0, deltaO: +1, deltaStamina: 0, resultText: `結果兩個人都沒寫作業，反而在線上開心地聊了 1 小時天！` }
+        },
+        {
+          prompt: `${DAYS[dayIdx]}睡飽起床後精神超好，看著大把的空白時間，你身體裡的熱血突然蠢蠢欲動...`,
+          optA: { label: `趁頭腦最清醒的時候，自主讀書 2 小時`, deltaS: +2, deltaO: 0, deltaStamina: -10, resultText: `因為睡得超飽，你一口氣高效讀了 2 小時書，進度大超前！` },
+          optB: { label: `換上運動服去跳舞／打球流汗 2 小時`, deltaS: 0, deltaO: +2, deltaStamina: -8, resultText: `你盡情運動流汗了 2 小時，多巴胺大爆發心情超爽快！` }
+        },
+        {
+          prompt: `${DAYS[dayIdx]}在家裡躺著休息時，突然翻到之前買卻一直沒看的課外書跟遊戲紀錄...`,
+          optA: { label: `靜下心來閱讀學習 1 小時，充實自己`, deltaS: +1, deltaO: 0, deltaStamina: -3, resultText: `你度過了安靜專注的 1 小時閱讀時光，頭腦變得更靈活了！` },
+          optB: { label: `打開遊戲破關或追劇 1 小時`, deltaS: 0, deltaO: +1, deltaStamina: 0, resultText: `你開心地破關追劇 1 小時，享受沒有壓力的自由時間！` }
+        },
+        {
+          prompt: `${DAYS[dayIdx]}吃飽飯後沒有特別排事，家人問你要不要一起去附近散步逛街，或是待在房間？`,
+          optA: { label: `留在房間書桌前，幫這週的課業做個重點整理`, deltaS: +1, deltaO: 0, deltaStamina: -5, resultText: `你利用這段空檔整理好筆記，讀書時數 +1 小時！` },
+          optB: { label: `跟家人一起出門逛街吃點心 1 小時`, deltaS: 0, deltaO: +1, deltaStamina: +4, resultText: `你跟家人邊走邊聊還吃了好吃的點心，度過溫馨的 1 小時！` }
+        },
+        {
+          prompt: `${DAYS[dayIdx]}外面突然下起微雨，聽著雨聲的空白課餘時段，你最想做什麼？`,
+          optA: { label: `泡杯熱飲坐在窗邊背單字、算數學 1 小時`, deltaS: +1, deltaO: 0, deltaStamina: -4, resultText: `伴著雨聲白噪音讀書意外地超有氣氛，多累積了 1 小時學習！` },
+          optB: { label: `窩在沙發上看YouTube或練樂器／畫畫 1 小時`, deltaS: 0, deltaO: +1, deltaStamina: +3, resultText: `你在雨天享受了超愜意的 1 小時個人興趣時光！` }
+        },
+        {
+          prompt: `${DAYS[dayIdx]}這天過得特別清閒，睡前看著明天即將到來的行程，你決定？`,
+          optA: { label: `睡前花 1 小時預習並把書包整理好`, deltaS: +1, deltaO: 0, deltaStamina: -4, resultText: `你做好了萬全預習準備，帶著滿滿的安全感入睡！` },
+          optB: { label: `戴上耳機聽歌、滑手機放鬆 1 小時再睡`, deltaS: 0, deltaO: +1, deltaStamina: +2, resultText: `你聽著喜歡的歌放鬆了 1 小時，悠哉地結束這一天。` }
+        }
+      ];
+
+      // 只要當天有排 >=1 小時讀書或自己的事，就進入對應題庫，並用 7 天不重複洗牌抽取
+      if (studyHours >= 1 && studyHours >= ownHours) {
+        const idx = pickNonRepeatingIndex(dayIdx, studyDilemmas.length, playerSeed + 101);
+        return studyDilemmas[idx];
+      } else if (ownHours >= 1) {
+        const idx = pickNonRepeatingIndex(dayIdx, ownDilemmas.length, playerSeed + 202);
+        return ownDilemmas[idx];
+      } else {
+        const idx = pickNonRepeatingIndex(dayIdx, freeDilemmas.length, playerSeed + 303);
+        return freeDilemmas[idx];
+      }
     }
 
     function simulatePlayerDay(player, dayIdx, allPlayers, baseSeed) {
@@ -1844,7 +1973,7 @@
               <!-- 現場二選一抉擇區塊 -->
               <div class="p-3.5 rounded-xl bg-gradient-to-br from-sky-500/10 via-blue-500/10 to-amber-500/10 border border-sky-500/30 space-y-2.5">
                 <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-black text-sky-600 dark:text-sky-300">⚡ 計畫趕不上變化・二選一抉擇</span>
+                  <span class="text-[11px] font-black text-sky-600 dark:text-sky-300">⚡ ${DAYS[dayIdx]}突發・二選一抉擇</span>
                   ${res.picked ? `<span class="text-[10px] font-bold text-emerald-500">✓ 已抉擇</span>` : `<span class="text-[10px] font-bold text-amber-500 animate-pulse">請選擇</span>`}
                 </div>
                 <p class="text-xs font-bold text-slate-700 dark:text-slate-200 leading-relaxed">
